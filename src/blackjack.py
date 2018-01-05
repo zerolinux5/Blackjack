@@ -22,6 +22,15 @@ class Deck(object):
     def shuffle(self):
         random.shuffle(self.deck)
 
+    # Pop top card
+    def pop_card(self):
+        top_card = self.deck.pop()
+        return top_card
+
+    # Define len
+    def __len__(self):
+        return len(self.deck)
+
     # Convert Deck to string
     def __str__(self):
         deck_string = ""

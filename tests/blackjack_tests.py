@@ -21,5 +21,21 @@ class Test_Deck_Class(unittest.TestCase):
             test_list = str(self.deck)
             self.assertNotEqual(first_list, test_list)
 
+    # Test pop deck
+    def test_pop_card(self):
+        # Test 52 card pop
+        for x in range(52):
+            self.deck.pop_card()
+        self.assertEqual(len(self.deck), 0)
+
+    # Test each card is different
+    def test_pop_unique_cards(self):
+        list_of_cards = []
+        # Test 52 card pop
+        for x in range(52):
+            new_card = str(self.deck.pop_card())
+            self.assertNotIn(new_card, list_of_cards)
+            list_of_cards.append(new_card)
+
 if __name__ == '__main__':
     unittest.main()
