@@ -3,6 +3,7 @@ import random
 
 #Constants
 MAGIC_SHUFFLE_NUMBER = 7
+END_GAME = 21
 
 #Game deck, used to shuffle and keep track of cards
 class Deck(object):
@@ -56,6 +57,14 @@ class Card(object):
     def get_suit(self):
         return self.suit
 
+    # Explicit call to obtain value
+    def get_val(self):
+        val = self.value
+        # Face values equal 10
+        if self.value >= 10:
+            val = 10
+        return val
+
     # String value
     def __str__(self):
         # Convert 11-13 to Face cards
@@ -65,6 +74,8 @@ class Card(object):
             value = "Queen"
         elif self.value == 13:
             value = "King"
+        elif self.value == 1:
+            value = "Ace"
         else:
             value = str(self.value)
 
@@ -81,6 +92,13 @@ class Player(object):
     # Add card to hand
     def hit(self, card):
         self.hand.append(card)
+
+    # Return the cards as a list if any
+    def get_hand(self):
+        return_hand = None
+        if len(self.hand) > 0:
+            return_hand = self.hand
+        return return_hand
 
     # Return every card in hand
     def __str__(self):
@@ -107,6 +125,46 @@ def starting_hand(human, dealer, game_deck):
     print "Dealer cards: X X " + dealer_card
     print "Player cards:" + str(human)
 
+# Update until human no longer moves
+def players_turn(human, game_deck):
+    end_value = 0
+    ace = 0
+    value = None
+    cont = True
+
+    # Count player starting hand
+    for card in human.get_hand():
+        new_value = card.get_val()
+        if new_value == 1:
+            ace += 1
+            new_value = 11
+        end_value += new_value
+
+    # Keep hitting until player says end or is over
+    while cont:
+        value = raw_input("Player, enter Hit or End:")
+        cont = value != "End"
+        if value == "Hit":
+            new_card = game_deck.pop_card()
+            new_val = new_card.get_val()
+            if new_val == 1:
+                ace += 1
+                new_val = 11
+            end_value += new_val
+            print "New card:" + str(new_card)
+            human.hit(new_card)
+            if end_value > END_GAME:
+                # No aces so we broke
+                if ace <= 0:
+                    cont = False
+                # While we have aces to reduce
+                while ace > 0:
+                    ace -= 1
+                    end_value -= 10
+                    if end_value < END_GAME:
+                        break
+    return end_value
+
 # Main loop
 def main():
     human = Player()
@@ -116,6 +174,13 @@ def main():
 
     # 1. Start the player and dealer with 2 cards each
     starting_hand(human, dealer, game_deck)
+
+    #2. Loop to allow player to keep hitting
+    player_val = players_turn(human, game_deck)
+
+    #3. Logic for dealer
+
+    #4. Calulcate winner
 
 #Call main if not imported
 if __name__ == "__main__":
