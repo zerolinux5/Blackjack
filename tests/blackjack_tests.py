@@ -37,5 +37,37 @@ class Test_Deck_Class(unittest.TestCase):
             self.assertNotIn(new_card, list_of_cards)
             list_of_cards.append(new_card)
 
+class Test_Update_Value_And_Aces(unittest.TestCase):
+
+    # Create the deck
+    def setUp(self):
+        self.player = blackjack.Player()
+
+    # Test each card is different
+    def test_num_aces(self):
+        # Add 10 aces
+        for x in range(10):
+            new_card = blackjack.Card("Spades", 1)
+            self.player.hit(new_card)
+            num_aces, ignore = blackjack.update_value_and_aces(self.player)
+            self.assertEqual(num_aces, x+1)
+
+
+    # Test each card is different
+    def test_total(self):
+        count = 0
+        # Add 1 - 10
+        for x in range(1,11):
+            new_card = blackjack.Card("Spades", x)
+            self.player.hit(new_card)
+            ignore, total = blackjack.update_value_and_aces(self.player)
+            # Ace is worth 11 out of context
+            if x == 1:
+                test = 11
+            else:
+                test = x
+            self.assertEqual(total, count + test)
+            count += test
+
 if __name__ == '__main__':
     unittest.main()

@@ -127,20 +127,27 @@ def starting_hand(human, dealer, game_deck):
     print "Dealer cards: X X " + dealer_card
     print "Player cards:" + str(human)
 
-# Update until human no longer moves
-def players_turn(human, game_deck):
-    end_value = 0
+def update_value_and_aces(player):
     ace = 0
-    value = None
-    cont = True
+    end_value = 0
 
     # Count player starting hand
-    for card in human.get_hand():
+    for card in player.get_hand():
         new_value = card.get_val()
         if new_value == 1:
             ace += 1
             new_value = 11
         end_value += new_value
+
+    return ace, end_value
+
+# Update until human no longer moves
+def players_turn(human, game_deck):
+    value = None
+    cont = True
+
+    # Obtain number of aces and total sum so far
+    ace, end_value = update_value_and_aces(human)
 
     # Keep hitting until player says end or is over
     while cont:
@@ -169,20 +176,15 @@ def players_turn(human, game_deck):
 
 # Dealers logic, hit if under 17
 def dealers_turn(dealer, game_deck):
-    end_value = 0
-    ace = 0
     value = None
     cont = True
 
-    # Count player starting hand
-    for card in dealer.get_hand():
-        new_value = card.get_val()
-        if new_value == 1:
-            ace += 1
-            new_value = 11
-        end_value += new_value
-        if end_value >= DEALER_NUMER:
-            cont = False
+    # Obtain number of aces and total sum so far
+    ace, end_value = update_value_and_aces(dealer)
+
+    # Dealer ends if equal to or over 17
+    if end_value >= DEALER_NUMER:
+        cont = False
 
     # Keep hitting until player says end or is over
     while cont:
